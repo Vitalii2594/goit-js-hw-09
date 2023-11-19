@@ -4,35 +4,36 @@ function getRandomHexColor() {
     .padStart(6, '0')}`;
 }
 
-// Отримуємо посилання на кнопки та body
-const startButton = document.getElementById('startBtn');
-const stopButton = document.getElementById('stopBtn');
-const body = document.body;
+const startButton = document.querySelector('[data-start]');
+const stopButton = document.querySelector('[data-stop]');
+let intervalId = false;
+stopButton.disabled = true;
 
-let intervalId;
+startButton.addEventListener('click', () => {
+  if (!intervalId) {
+    startButton.disabled = true;
+    stopButton.disabled = false;
+    intervalId = setInterval(() => {
+      const randomColor = getRandomHexColor();
+      document.body.style.backgroundColor = randomColor;
+      // Оновлюємо поточний колір фону у локальному сховищі
+      localStorage.setItem('color-switcher', randomColor);
+    }, 1000);
+  }
+});
 
-// Функція для зміни кольору та активації/деактивації кнопок
-function startColorSwitch() {
-  // Активуємо Stop та деактивуємо Start
-  startButton.disabled = true;
-  stopButton.disabled = false;
+stopButton.addEventListener('click', () => {
+  if (intervalId) {
+    clearInterval(intervalId);
+    intervalId = null;
+    startButton.disabled = false;
+    stopButton.disabled = true;
+  }
+});
 
-  // Запускаємо зміну кольору кожну секунду
-  intervalId = setInterval(() => {
-    body.style.backgroundColor = getRandomHexColor();
-  }, 1000);
-}
-
-// Функція для зупинки зміни кольору та активації/деактивації кнопок
-function stopColorSwitch() {
-  // Деактивуємо Stop та активуємо Start
-  startButton.disabled = false;
-  stopButton.disabled = true;
-
-  // Зупиняємо зміну кольору
-  clearInterval(intervalId);
-}
-
-// Додаємо обробник подій на кнопки
-startButton.addEventListener('click', startColorSwitch);
-stopButton.addEventListener('click', stopColorSwitch);
+window.addEventListener('load', () => {
+  const savedColor = localStorage.getItem('color-switcher');
+  if (savedColor) {
+    document.body.style.backgroundColor = savedColor;
+  }
+});
