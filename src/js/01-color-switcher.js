@@ -1,39 +1,42 @@
+const refs = {
+  startBtn: document.querySelector('[data-start]'),
+  stopBtn: document.querySelector('[data-stop]'),
+};
+
+const TIME_DELAY = 1000;
+let intervalId = null;
+
+setDisabled(refs.stopBtn);
+
+refs.startBtn.addEventListener('click', onStartClick);
+refs.stopBtn.addEventListener('click', onStopClick);
+
+function onStartClick(e) {
+  const sibling = e.target.nextElementSibling;
+  setDisabled(e.target);
+  removeDisabled(sibling);
+  intervalId = setInterval(() => {
+    document.body.style.backgroundColor = getRandomHexColor();
+  }, TIME_DELAY);
+}
+
+function onStopClick(e) {
+  const sibling = e.target.previousElementSibling;
+  setDisabled(e.target);
+  removeDisabled(sibling);
+  clearInterval(intervalId);
+}
+
+function setDisabled(elem) {
+  elem.setAttribute('disabled', !elem.disabled);
+}
+
+function removeDisabled(elem) {
+  elem.removeAttribute('disabled');
+}
+
 function getRandomHexColor() {
   return `#${Math.floor(Math.random() * 16777215)
     .toString(16)
-    .padStart(6, '0')}`;
+    .padStart(6, 0)}`;
 }
-
-const startButton = document.querySelector('[data-start]');
-const stopButton = document.querySelector('[data-stop]');
-let intervalId = false;
-stopButton.disabled = true;
-
-startButton.addEventListener('click', () => {
-  if (!intervalId) {
-    startButton.disabled = true;
-    stopButton.disabled = false;
-    intervalId = setInterval(() => {
-      const randomColor = getRandomHexColor();
-      document.body.style.backgroundColor = randomColor;
-      // Оновлюємо поточний колір фону у локальному сховищі
-      localStorage.setItem('color-switcher', randomColor);
-    }, 1000);
-  }
-});
-
-stopButton.addEventListener('click', () => {
-  if (intervalId) {
-    clearInterval(intervalId);
-    intervalId = null;
-    startButton.disabled = false;
-    stopButton.disabled = true;
-  }
-});
-
-window.addEventListener('load', () => {
-  const savedColor = localStorage.getItem('color-switcher');
-  if (savedColor) {
-    document.body.style.backgroundColor = savedColor;
-  }
-});
