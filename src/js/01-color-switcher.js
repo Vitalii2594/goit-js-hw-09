@@ -4,25 +4,35 @@ function getRandomHexColor() {
     .padStart(6, '0')}`;
 }
 
-const startBtn = document.querySelector('[data-start]');
-const stopBtn = document.querySelector('[data-stop]');
+// Отримуємо посилання на кнопки та body
+const startButton = document.getElementById('startBtn');
+const stopButton = document.getElementById('stopBtn');
+const body = document.body;
+
 let intervalId;
 
-startBtn.addEventListener('click', startColorSwitch);
-stopBtn.addEventListener('click', stopColorSwitch);
-
+// Функція для зміни кольору та активації/деактивації кнопок
 function startColorSwitch() {
-  startBtn.disabled = true;
-  stopBtn.disabled = false;
+  // Активуємо Stop та деактивуємо Start
+  startButton.disabled = true;
+  stopButton.disabled = false;
 
+  // Запускаємо зміну кольору кожну секунду
   intervalId = setInterval(() => {
-    document.body.style.backgroundColor = getRandomHexColor();
+    body.style.backgroundColor = getRandomHexColor();
   }, 1000);
 }
 
+// Функція для зупинки зміни кольору та активації/деактивації кнопок
 function stopColorSwitch() {
-  startBtn.disabled = false;
-  stopBtn.disabled = true;
+  // Деактивуємо Stop та активуємо Start
+  startButton.disabled = false;
+  stopButton.disabled = true;
 
+  // Зупиняємо зміну кольору
   clearInterval(intervalId);
 }
+
+// Додаємо обробник подій на кнопки
+startButton.addEventListener('click', startColorSwitch);
+stopButton.addEventListener('click', stopColorSwitch);
